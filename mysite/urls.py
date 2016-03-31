@@ -18,8 +18,12 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+<<<<<<< HEAD
     url(r'^polls/', include('polls.urls')),
     url(r'^tango/', include('tango.urls')),
+=======
+    url(r'^polls/', include('polls.urls',namespace="polls")),
+>>>>>>> 53dae9a7ad206e71658ad44b62b407625b0f9c7c
 ]
 if settings.DEBUG:
     urlpatterns +=patterns(
