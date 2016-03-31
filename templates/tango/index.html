@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+    <script src="{% static 'jquery-2.0.3.min.js' %}"></script>
+	<title>Rango</title>
+</head>
+
+<body>
+	<h1>Rango says ...hello world!</h1>
+
+	{% if categories %}
+	<ul>
+		{% for category in categories %}
+		<li><a href="/tango/category/{{ category.slug }}">{{ category.name}}</a></li>
+	 {% endfor %}
+	</ul>
+	{% else %}
+        <strong>There are no categories present.</strong>
+    {% endif %}
+    <a href="/tango/add_category/">Add a New Category</a><br />
+	<a href="/tango/about/">About</a><br/>
+ </body>
+</html>
