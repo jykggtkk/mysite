@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Category,Page
-from .form import CategoryForm
+from .form import CategoryForm,PageForm
 # Create your views here.
 def index(request):
     #return HttpResponse( "Tango says hey the world!")
@@ -11,6 +11,8 @@ def index(request):
     context_dict={'categories':category_list}
     return render(request,'tango/index.html',context_dict)
 
+def about(request):
+    return render(request,'tango/index.html','Hello,I\'m tango.')
 def category(request,category_name_slug):
     #Create a context dictionary which we can pass to the template rendering engine.
     context_dict={}
@@ -60,4 +62,31 @@ def add_category(request):
     #Bad form (or form details),no form supplied...
     #Render the form with error messages (if any).
     return render(request,'tango/add_category.html',{'form':form})
-    
+
+def add_page(request,category_name_slug):
+    #context =RequestContext(request)
+    #cat_list=get_category_list() 
+    context_dict={}
+    try:
+        cat=Category.objects.get(slug=category_name_slug)
+        print cat
+    except Category.DoesNotExist:
+        cat =None
+
+    if request.method =='POST':
+        form = PageForm(request.POST)
+        if form.is_valid():
+            if cat:
+                page = form.save(commit=False)
+                page.category = cat 
+                page.views=0
+                page.save()
+                #probably better to use a redirect here .
+                return  category(request,category_name_slug)
+        else:
+            print form.errors
+    else:
+        form = PageForm()
+    context_dict['category_name_url']= category_name_slug 
+    context_dict['form']=form 
+    return render(request,'tango/add_page.html',context_dict) 

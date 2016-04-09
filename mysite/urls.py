@@ -15,19 +15,15 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls import patterns, include, url 
-from django.contrib import admin 
+from django.contrib import admin
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-<<<<<<< HEAD
-    url(r'^polls/', include('polls.urls')),
-    url(r'^tango/', include('tango.urls')),
-=======
-    url(r'^polls/', include('polls.urls',namespace="polls")),
->>>>>>> 53dae9a7ad206e71658ad44b62b407625b0f9c7c
-]
+    url(r'^admin/', admin.site.urls),  
+    url(r'^tango/', include('tango.urls')), 
+    url(r'^polls/', include('polls.urls',namespace="polls")), 
+    ]
 if settings.DEBUG:
-    urlpatterns +=patterns(
+    urlpatterns += patterns(
         'django.views.static',
-        (r'media/(?P<path>.*)',
+        (r'^media/(?P<path>.*)',
         'serve',
-        {'document_root':settings.MEDIA_ROOT}),)
+        {'document_root': settings.MEDIA_ROOT}), )
