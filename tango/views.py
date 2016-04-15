@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
+from django.contrib.auth import authenticate,login
 from .models import Category,Page
-from .form import CategoryForm,PageForm
+from .form import CategoryForm,PageForm,UserForm,UserProfileForm
 # Create your views here.
 def index(request):
     #return HttpResponse( "Tango says hey the world!")
@@ -13,6 +14,7 @@ def index(request):
 
 def about(request):
     return render(request,'tango/index.html','Hello,I\'m tango.')
+
 def category(request,category_name_slug):
     #Create a context dictionary which we can pass to the template rendering engine.
     context_dict={}
@@ -63,30 +65,119 @@ def add_category(request):
     #Render the form with error messages (if any).
     return render(request,'tango/add_category.html',{'form':form})
 
-def add_page(request,category_name_slug):
-    #context =RequestContext(request)
-    #cat_list=get_category_list() 
-    context_dict={}
+def add_page(request, category_name_slug):
+    #context = RequestContext(request)
+    #cat_list = get_category_list()
+    context_dict = {}
     try:
         cat=Category.objects.get(slug=category_name_slug)
-        print cat
+        print cat 
     except Category.DoesNotExist:
-        cat =None
-
-    if request.method =='POST':
+        cat=None
+ 
+    if request.method == 'POST':
         form = PageForm(request.POST)
         if form.is_valid():
             if cat:
                 page = form.save(commit=False)
-                page.category = cat 
-                page.views=0
+                page.category = cat
                 page.save()
-                #probably better to use a redirect here .
-                return  category(request,category_name_slug)
+                #probably better to use a redirect here.
+                return category(request,category_name_slug)
+            else:
+                print form.errors
         else:
-            print form.errors
+            form = PageForm()
     else:
         form = PageForm()
-    context_dict['category_name_url']= category_name_slug 
+    context_dict['category_name_url']=category_name_slug
     context_dict['form']=form 
-    return render(request,'tango/add_page.html',context_dict) 
+
+    return render(request,'tango/add_page.html',context_dict)
+
+def register(request):
+
+    #Aboolean value for telling the template whether the registration was successful.
+    #Set to False initially.Code changes value to True when retgistration succeeds.
+    registered =False
+
+    #If it's a HTTP POST, we're interested in processing form data.
+    if request.method =='POST':
+        #Attempt to grab information from the raw form information.
+        #Note that we make use of both UserForm and UserProfileForm.
+        user_form=UserForm(data=request.POST)
+        profile_form=UserProfileForm(data=request.POST)
+
+        #If the two forms are valid...
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+
+            #Now we hash the password with the set_password method.
+            #Once hashed,we can update the user object.
+            user.set_password(user.password)
+            user.save()
+
+            #Now sort out the UserProfiles instance 
+            #Since we need to set the user attribute ourselves,we set commit=False.
+            #This delays saving the model until we're ready to avoid integrity problems.
+            profile = profile_form.save(commit=False)
+            profile.user = user 
+
+            #Did the user provide a profile picture?
+            #If so,we need to  get it from the input form and put it in the UserProfiles model.
+            if 'picture' in request.FILES:
+                profile.picture = request.FILES['picture']
+
+            #Now we save the UserProfile model instance.
+            profile.save()
+
+            #Update our variable to tell the template registration was successful.
+            registered = True
+        #Invalid form or forms - mistakes or something else?
+        #Print problems to  the terminal.
+        #They'll also be shown to the user.
+        else:
+            print user_form.errors,profile_form.errors
+    else:
+        user_form = UserForm()
+        profile_form=UserProfileForm()
+
+    #Render the template depending  on the context.
+    return render(request,
+        'tango/register.html',
+        {'user_form':user_form,'profile_form':profile_form,'registered':registered})
+def user_login(request):
+    #If the request is a http POST,try to pull out the relevant information.
+    if request.method=='POST':
+        #Gather the username and password provided by the user.
+        #This information is obtained from the login form.
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        #Use Django's machinery to attempt to see if the username/password
+        #combination is valid - a User object is returned if it is.
+        user = authenticate(username=username,password=password)
+
+        #If we have a User object,the details are correct.
+        #If None,no user
+        #with matching credentials was found.
+        if user:
+            #Is the account active? It could have been disabled.
+            if user.is_active:
+                #If the account is valid and active,we can log the user in.
+                #We'll send the user back to the homepage.
+                login(request,user)
+                return HttpResponseRedirect('/tango/')
+            else:
+                #An inactive account was used - no logging in!
+                return HttpResponse("Your Tango account is disabled.")
+        else:
+            #Bad Login details were provided.So we can't log the user in.
+            print "Invalid login details:{0},{1}".format(username,password)
+            return HttpResponse("Invalid login details supplied.")
+    #The request is not a HTTP POST,so display the login form.
+    #This scenario would most likely be a HTTP GET.
+    else:
+        #No context variable to pass to  the template system,hence t he 
+        #blank dictionary object...
+        return render(request,'tango/login.html',{})
