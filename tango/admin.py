@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Category,Page,UserProfiles
 
+
 # Register your models here.
 class PageAdmin(admin.ModelAdmin):
     list_deplay=('title','category','url')

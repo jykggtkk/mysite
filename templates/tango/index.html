@@ -9,11 +9,10 @@
 
 <body>
 	<a href="/tango/login/">Login</a>
-	{% if user.is_authenticate%}
+	{% if user.is_authenticated %}
 	<h1>Rango says ...hello {{user.username}}!</h1>
     {% else %}
-    <h1>Tango says... hello world!</h1>
-
+    <h1>Tango says... hello world!</h1> 
     {% endif %}
 
    	{% if categories %}
@@ -26,6 +25,6 @@
         <strong>There are no categories present.</strong>
     {% endif %}
     <a href="/tango/add_category/">Add a New Category</a><br />
-	<a href="/tango/about/">About</a><br/>
+	<a href="/tango/about/">About</a><br/> <a href="/tango/register/">Register</a>
  </body>
 </html>

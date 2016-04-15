@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate, login
 from .models import Category,Page
 from .form import CategoryForm,PageForm,UserForm,UserProfileForm
 # Create your views here.
@@ -152,12 +152,11 @@ def user_login(request):
         #Gather the username and password provided by the user.
         #This information is obtained from the login form.
         username = request.POST.get('username')
-        password = request.POST.get('password')
-
+        password = request.POST.get('password') 
         #Use Django's machinery to attempt to see if the username/password
         #combination is valid - a User object is returned if it is.
-        user = authenticate(username=username,password=password)
-
+        user = authenticate(username=username, password=password)
+        print user
         #If we have a User object,the details are correct.
         #If None,no user
         #with matching credentials was found.
