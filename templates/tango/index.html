@@ -8,9 +8,15 @@
 </head>
 
 <body>
-	<h1>Rango says ...hello world!</h1>
+	<a href="/tango/login/">Login</a>
+	{% if user.is_authenticate%}
+	<h1>Rango says ...hello {{user.username}}!</h1>
+    {% else %}
+    <h1>Tango says... hello world!</h1>
 
-	{% if categories %}
+    {% endif %}
+
+   	{% if categories %}
 	<ul>
 		{% for category in categories %}
 		<li><a href="/tango/category/{{ category.slug }}">{{ category.name}}</a></li>
