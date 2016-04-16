@@ -1,19 +1,21 @@
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
+from django.contrib.auth.decorators import login_required
 from .models import Category,Page
 from .form import CategoryForm,PageForm,UserForm,UserProfileForm
 # Create your views here.
 def index(request):
     #return HttpResponse( "Tango says hey the world!")
     #context_dict={'boldmessage':"I am bold font from the context"}
-    #return render(request,'tango/index.html',context_dict)
+    #return render(request,'tango/index.html',context_dict) 
     category_list=Category.objects.order_by('-likes')[:5]
     context_dict={'categories':category_list}
     return render(request,'tango/index.html',context_dict)
 
 def about(request):
-    return render(request,'tango/index.html','Hello,I\'m tango.')
+    #return render(request,'tango/index.html','Hello,I\'m tango.')
+    return HttpResponse('Tango says:Here is the about page. <a href="/tango/">Index</a>')
 
 def category(request,category_name_slug):
     #Create a context dictionary which we can pass to the template rendering engine.
@@ -40,7 +42,7 @@ def category(request,category_name_slug):
 
     #Go render the response and return it to the client.
     return render(request,'tango/category.html',context_dict)
-
+@login_required
 def add_category(request):
     #A HTTP POST?
     if request.method =='POST':
@@ -64,7 +66,7 @@ def add_category(request):
     #Bad form (or form details),no form supplied...
     #Render the form with error messages (if any).
     return render(request,'tango/add_category.html',{'form':form})
-
+@login_required
 def add_page(request, category_name_slug):
     #context = RequestContext(request)
     #cat_list = get_category_list()
@@ -173,10 +175,27 @@ def user_login(request):
         else:
             #Bad Login details were provided.So we can't log the user in.
             print "Invalid login details:{0},{1}".format(username,password)
-            return HttpResponse("Invalid login details supplied.")
+            return HttpResponse("Invalid login details supplied.") 
+            #return render(request,'/tango/login.html',{'warn':'User or Password is wrong!'})
     #The request is not a HTTP POST,so display the login form.
     #This scenario would most likely be a HTTP GET.
     else:
         #No context variable to pass to  the template system,hence t he 
         #blank dictionary object...
         return render(request,'tango/login.html',{})
+# def some_view(request):
+#     if not request.user.is_authenticated():
+#         return HttpResponse("You are logged in.")
+#     else:
+#         return HttpResponse("You are not logged in.")
+@login_required
+def restricted(request):
+    return HttpResponse("Since you're logged in,you can see this text!")
+
+@login_required
+def user_logout(request):
+    #Since we know the user is logged in,we can now just log them out.
+    logout(request)
+
+    #Take the user back to the homepage.
+    return HttpResponseRedirect('/tango')

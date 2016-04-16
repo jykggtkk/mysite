@@ -1,18 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Tango</title>
-</head>
-<body>
+ {% extends 'base.html' %} 
+ {% load staticfiles %}
+ {% block title %}Tango - Register{% endblock %}
+ {% block body_block %}
+ <div> 
 	<h1>Register with Tango</h1>
 
 	{% if registered %}
 	Tango says: <strong>thank you for registering!</strong>
 	<a href="/tango/">Return to the homepage.</a><br />
 	{% else %}
-	Tango says: <strong>register here!</strong><br />
-
+	Tango says: <strong>register here!</strong><br /> 
 	<form id="user_form" method="post" action="/tango/register/" enctype="multipart/form-data">
 		{% csrf_token %}
 
@@ -22,9 +19,8 @@
 		{{user_form.as_p}}
 		{{profile_form.as_p}}
 		<!-- Provide a button to click to submit the form. -->
-		<input type="submit" name="submit" value ="Register" />
-
+		<input type="submit" name="submit" value ="Register" /> 
 	</form>
 	{% endif%}
-</body>
-</html>
+	</div> 
+ {% endblock %}

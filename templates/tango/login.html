@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Tango</title>
-</head>
-<body>
-	<h1>Login to Tango</h1>
-
+ {% extends 'base.html' %} 
+ {% load staticfiles %}
+ {% block title %}{{ category_name }}{% endblock %}
+ {% block body_block %}
+ <div> 
+	<h1>Login to Tango</h1> 
 	<form id="login_form" method="post" action ="/tango/login/">
 		{%csrf_token%}
 		Username:<input type="text" name="username" value="" size="50" />
@@ -15,5 +12,5 @@
 		<br />
 		<input type="submit" value="submit" />
 	</form>
-</body>
-</html>
+</div>
+ {% endblock %}
