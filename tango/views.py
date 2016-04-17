@@ -4,14 +4,61 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.decorators import login_required
 from .models import Category,Page
 from .form import CategoryForm,PageForm,UserForm,UserProfileForm
+from datetime import datetime 
 # Create your views here.
 def index(request):
     #return HttpResponse( "Tango says hey the world!")
     #context_dict={'boldmessage':"I am bold font from the context"}
     #return render(request,'tango/index.html',context_dict) 
-    category_list=Category.objects.order_by('-likes')[:5]
-    context_dict={'categories':category_list}
-    return render(request,'tango/index.html',context_dict)
+    category_list=Category.objects.all()
+    page_list=Page.objects.order_by('-view')[:5]
+    context_dict={'categories':category_list,'pages':page_list}
+
+    #Get the number of visits to the site.
+    #We use the COOKIES.get() function to obtain the visits cookie.
+    #If the cookie exists,the value returned is casted to an integer.
+    #If the cookie doesn't exist,we default to zero and cast that.
+    visits=int(request.COOKIES.get('visits','1'))
+    #print visits 
+    reset_last_visit_time=False
+    response = render(request,'tango/index.html',context_dict)
+
+    #request.session.set_test_cookie()
+    if 'last_visit' in request.COOKIES:
+        #Yes it does! Get the cookie's value.
+        last_visit =request.COOKIES['last_visit']
+        print last_visit[:20]
+        #Cast the value to a Python date/time object.
+        last_visit_time=datetime.strptime(last_visit[:19],"%Y-%m-%d %H:%M:%S")
+        #print last_visit_time
+        print 1 
+
+        #If it's been more than a day since the last visit...
+        if(datetime.now()-last_visit_time).seconds >5:
+            visits=visits+1
+            #...and flagthat the cookie last visit needs to be updated
+            reset_last_visit_time= True
+            context_dict['visits']=visits
+            print 2 
+    else:
+        #Cookie last_visit doesn't exist,so flag that it should be set.
+        reset_last_visit_time = True
+
+        context_dict['visits']=visits
+        print 3
+
+        #Obtain our Response object early so we can add cookie information.
+        response= render(request,'tango/index.html',context_dict)
+
+    if reset_last_visit_time:
+        response.set_cookie('last_visit',datetime.now())
+        response.set_cookie('visits',visits)
+        print 4
+        print context_dict['visits']
+
+    #Return response back to the user,updating any cookies that need changed.
+    return response 
+
 
 def about(request):
     #return render(request,'tango/index.html','Hello,I\'m tango.')
@@ -98,7 +145,10 @@ def add_page(request, category_name_slug):
     return render(request,'tango/add_page.html',context_dict)
 
 def register(request):
-
+    
+    if request.session.test_cookie_worked():
+        print ">>> TEST COOKIE WORKED!"
+        request.session.delete_test_cookie()
     #Aboolean value for telling the template whether the registration was successful.
     #Set to False initially.Code changes value to True when retgistration succeeds.
     registered =False
