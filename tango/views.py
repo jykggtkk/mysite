@@ -6,64 +6,53 @@ from .models import Category,Page
 from .form import CategoryForm,PageForm,UserForm,UserProfileForm
 from datetime import datetime 
 # Create your views here.
-def index(request):
-    #return HttpResponse( "Tango says hey the world!")
-    #context_dict={'boldmessage':"I am bold font from the context"}
-    #return render(request,'tango/index.html',context_dict) 
-    category_list=Category.objects.all()
+def index(request): 
+
+    category_list=Category.objects.order_by('-likes')[:5]
     page_list=Page.objects.order_by('-view')[:5]
     context_dict={'categories':category_list,'pages':page_list}
 
-    #Get the number of visits to the site.
-    #We use the COOKIES.get() function to obtain the visits cookie.
-    #If the cookie exists,the value returned is casted to an integer.
-    #If the cookie doesn't exist,we default to zero and cast that.
-    visits=int(request.COOKIES.get('visits','1'))
-    #print visits 
+    #Get the number of visits to the site. 
+    visits= request.session.get('visits')
+
+    if not visits:
+        visits = 1 
     reset_last_visit_time=False
-    context_dict['visits']=visits
-    response = render(request,'tango/index.html',context_dict)
 
-    #request.session.set_test_cookie()
-    if 'last_visit' in request.COOKIES:
-        #Yes it does! Get the cookie's value.
-        last_visit =request.COOKIES['last_visit']
-        print last_visit[:19]
-        #Cast the value to a Python date/time object.
-        last_visit_time=datetime.strptime(last_visit[:19],"%Y-%m-%d %H:%M:%S")
-        print 'a'
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+        last_visit_time =datetime.strptime(last_visit[:-7],"%Y-%m-%d %H:%M:%S")
 
-        #If it's been more than a day since the last visit...
+
         if(datetime.now()-last_visit_time).seconds >5:
-            visits=visits+1
-            #...and flagthat the cookie last visit needs to be updated
-            reset_last_visit_time= True 
-            print 'b visits+1' 
+            visits=visits+1 
+            reset_last_visit_time= True  
             context_dict['visits']=visits
-        response= render(request,'tango/index.html',context_dict)
     else:
-        #Cookie last_visit doesn't exist,so flag that it should be set.
+        #Cookie last_visit doesn't exist,so create it to the current date/time.
         reset_last_visit_time = True 
-        print 'c'
-
+ 
         #Obtain our Response object early so we can add cookie information.
         response= render(request,'tango/index.html',context_dict)
 
-    if reset_last_visit_time:
-        response.set_cookie('last_visit',datetime.now())
-        response.set_cookie('visits',visits)
-        print 'd'
-    
-     
-    #print context_dict['visits']
-    #liucheng:   a  /  a b d / c d 
-    #Return response back to the user,updating any cookies that need changed. 
-    return response 
+    if reset_last_visit_time: 
+        request.session['last_visit']=str(datetime.now())
+        request.session['visits']=visits
+    context_dict['visits']=visits
+
+    return render(request,'tango/index.html',context_dict ) 
 
 
-def about(request):
-    #return render(request,'tango/index.html','Hello,I\'m tango.')
-    return HttpResponse('Tango says:Here is the about page. <a href="/tango/">Index</a>')
+def about(request):  
+    # If the visits session varible exists, take it and use it.
+    # If it doesn't, we haven't visited the site so set the count to zero.
+    if request.session.get('visits'):
+        count =request.session.get('visits')
+    else:
+        count = 0 
+
+    # Return and render the response, ensuring the count is passed to the template engine.
+    return render(request,'tango/about.html', {'visits':count})
 
 def category(request,category_name_slug):
     #Create a context dictionary which we can pass to the template rendering engine.

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #'polls',
     'tango',
+    'registration',#add in the registration package
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -130,5 +131,10 @@ STATICFILES_DIRS =[
 
 MEDIA_URL='/media/'
 MEDIA_ROOT= os.path.join(BASE_DIR,'media')
-
-LOGIN_URL = '/tango/login/'
+ 
+#registration
+REGISTRATION_OPEN=True 
+ACCOUNT_ACTIVATION_DAYS =7 
+REGISTRATION_AUTO_LOGIN=True
+LOGIN_REDIRECT_URL='/tango'
+LOGIN_URL = '/accounts/login/'

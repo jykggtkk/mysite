@@ -1,16 +1,14 @@
- {% extends 'base.html' %} 
- {% load staticfiles %}
- {% block title %}{{ category_name }}{% endblock %}
+ {% extends 'base.html' %}  
+ {% block title %}Tango - Login {% endblock %}
  {% block body_block %}
  <div> 
 	<h1>Login to Tango</h1> 
 	<form id="login_form" method="post" action ="/tango/login/">
 		{%csrf_token%}
-		Username:<input type="text" name="username" value="" size="50" />
+		 <h5>Username: <input type="text" name="username" value="" size="50" /> </h5> 
+		<h5>Password:  <input type="text" name="password" value="" size="50" /></h5>
 		<br />
-		Password:<input type="text" name="password" value="" size="50" />
-		<br />
-		<input type="submit" value="submit" />
+		<input type="submit" value="login" />
 	</form>
 </div>
  {% endblock %}
