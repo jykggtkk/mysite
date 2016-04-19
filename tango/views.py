@@ -21,31 +21,30 @@ def index(request):
     visits=int(request.COOKIES.get('visits','1'))
     #print visits 
     reset_last_visit_time=False
+    context_dict['visits']=visits
     response = render(request,'tango/index.html',context_dict)
 
     #request.session.set_test_cookie()
     if 'last_visit' in request.COOKIES:
         #Yes it does! Get the cookie's value.
         last_visit =request.COOKIES['last_visit']
-        print last_visit[:20]
+        print last_visit[:19]
         #Cast the value to a Python date/time object.
         last_visit_time=datetime.strptime(last_visit[:19],"%Y-%m-%d %H:%M:%S")
-        #print last_visit_time
-        print 1 
+        print 'a'
 
         #If it's been more than a day since the last visit...
         if(datetime.now()-last_visit_time).seconds >5:
             visits=visits+1
             #...and flagthat the cookie last visit needs to be updated
-            reset_last_visit_time= True
+            reset_last_visit_time= True 
+            print 'b visits+1' 
             context_dict['visits']=visits
-            print 2 
+        response= render(request,'tango/index.html',context_dict)
     else:
         #Cookie last_visit doesn't exist,so flag that it should be set.
-        reset_last_visit_time = True
-
-        context_dict['visits']=visits
-        print 3
+        reset_last_visit_time = True 
+        print 'c'
 
         #Obtain our Response object early so we can add cookie information.
         response= render(request,'tango/index.html',context_dict)
@@ -53,10 +52,12 @@ def index(request):
     if reset_last_visit_time:
         response.set_cookie('last_visit',datetime.now())
         response.set_cookie('visits',visits)
-        print 4
-        print context_dict['visits']
-
-    #Return response back to the user,updating any cookies that need changed.
+        print 'd'
+    
+     
+    #print context_dict['visits']
+    #liucheng:   a  /  a b d / c d 
+    #Return response back to the user,updating any cookies that need changed. 
     return response 
 
 
