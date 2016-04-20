@@ -26,13 +26,8 @@
 	    {% endfor %}
 	    </ul>
 	  {% else %}
-         <strong>There are no categories present.</strong>
-         {% if user.is_authenticated %}  
-         <ul class="nav"> 
-           <a href="{% url 'add_category' %}">Add a New Category</a> 
-         </ul>
-         {% endif %}
-    {% endif %} 
+         <strong>There are no categories present.</strong> 
+    {% endif %}  
     </div> 
     <div class="col-xs-12 col-sm-6 placeholder">
         <div class="panel panel-primary">
@@ -43,7 +38,7 @@
      {% if pages %}
       <ul  class="list-group">
         {% for page in pages %}
-        <li class="list-group-item"><a href="{{page.url}}">{{page.title}}</a></li>
+        <li class="list-group-item"><a href="{{page.url}}">{{page.title}}-{{page.category}}({{page.views}} views)</a></li>
         {% endfor %} 
       </ul>
     {% else %}
@@ -51,5 +46,10 @@
     {% endif %} 
     </div>
 </div>
+  {% if user.is_authenticated %}  
+       <ul class="nav"> 
+           <a href="{% url 'add_category' %}">Add a New Category</a> 
+       </ul>
+  {% endif %}
 <p>visits:{{ visits }}</p>
 {% endblock %}
