@@ -6,11 +6,15 @@ from .models import Category,Page
 from .form import CategoryForm,PageForm,UserForm,UserProfileForm
 from datetime import datetime 
 # Create your views here.
+@login_required
 def index(request): 
 
     category_list=Category.objects.order_by('-likes')[:5]
-    page_list=Page.objects.order_by('-view')[:5]
+    page_list=Page.objects.order_by('-views')[:5]
     context_dict={'categories':category_list,'pages':page_list}
+
+    print   category_list 
+    print   page_list 
 
     #Get the number of visits to the site. 
     visits= request.session.get('visits')
@@ -53,7 +57,7 @@ def about(request):
 
     # Return and render the response, ensuring the count is passed to the template engine.
     return render(request,'tango/about.html', {'visits':count})
-
+@login_required
 def category(request,category_name_slug):
     #Create a context dictionary which we can pass to the template rendering engine.
     context_dict={}
@@ -238,4 +242,4 @@ def user_logout(request):
     logout(request)
 
     #Take the user back to the homepage.
-    return HttpResponseRedirect('/tango')
+    return HttpResponseRedirect('/tango/login')
