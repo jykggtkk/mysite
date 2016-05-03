@@ -1,14 +1,18 @@
  {% extends 'base.html' %}  
  {% block title %}Tango - Login {% endblock %}
  {% block body_block %}
- <div> 
-	<h1>Login to Tango</h1> 
-	<form id="login_form" method="post" action ="/tango/login/">
+ <link rel="stylesheet" type="text/css" href="{% static 'signin.css' %}">
+ <div>  
+	<form class ="form-signin" role="form" id="login_form" method="post" action ="/tango/login/">
 		{%csrf_token%}
-		 <h5>Username: <input type="text" name="username" value="" size="50" /> </h5> 
-		<h5>Password:  <input type="text" name="password" value="" size="50" /></h5>
-		<br />
-		<input type="submit" value="login" />
+
+		<h2>Login to Tango</h2>
+		<input class="form-control" placeholder="Username" id="id_username" maxlength="254" name="username" type="text" required autofocus=""/>
+		<input type="password" class="form-control" placeholder="Password" id="id_password" name="password" type="password" required/>
+		<!-- <h5>Username: <input type="text" name="username" value="" size="50" /> </h5> 
+		<h5>Password:  <input type="text" name="password" value="" size="50" /></h5> -->
+		<button class="btn btn-lg btn-primary btn-block" type="submit" value="Submit">Sign in</button>
+		<!-- <input type="submit" value="login" /> -->
 	</form>
 </div>
  {% endblock %}

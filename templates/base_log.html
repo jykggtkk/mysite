@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+	<meta charset="UTF-8"> 
+	<meta http-equiv="X-UA-Compatible" content ="IE=edge">
+	<meta name="viewport" content= "width=device-width,inital-scale=1">
+	<meta name="description" content="First django website">
+	<meta name="author" content="duwj">
+	<link rel="icon" type="text/css" href="{% static 'images/favicon.ico' %}">
+
+	<title>Tango - {%block title %}How to Tango with Django {%endblock%}</title>
+
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'dashboard.css' %}" />
+
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+ 
+<div class="col-sm-12  col-md-12 col-lg-12  main">
+		<div>
+			{% block body_block %}{% endblock %}
+		</div> 
+	</div>	
+ 
+
+ <!-- Bootstrap core Javascipt
+ =========================================================-->
+ <!-- Placed at the end of the document so the pages load faster -->
+ <script type="text/javascript" src="{% static 'jquery-2.1.1.js' %}"></script> 
+ <script type="text/javascript"  src="{% static 'bootstrap.min.js' %}"></script>
+ <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+ <script type="text/javascript" src="{% static 'ie10-viewport-bug-workaround.js' %}"></script> 
+</body>
+</html>
