@@ -1,12 +1,30 @@
-{% extends "base.html" %}
-  {% block title %}Tango - Register {% endblock %}
+{% extends "base_log.html" %} 
+{% load static %}
+{% block title %} Login {% endblock %}
 {% block body_block %}
-<div> 
-  <h1>Register Here</h1>
-  <form method="post" action=".">
+<!-- <div>
+  <h1>Login</h1>
+  <form method="post" action="."> 
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit" />
-  </form>
+    {{ form.as_p }} 
+    <input type="submit" value="Log in" />
+    <input type="hidden" name="next" value="{{ next }}" />
+  </form> 
+  <p>Not  a member? <a href="{% url 'registration_register' %}">Register</a>!</p>
+</div> -->
+
+ <link rel="stylesheet" type="text/css" href="{% static 'signin.css' %}">
+ <div>  
+   <form class ="form-signin" role="form"   method="post" action=".">
+  	<h2>Register Here</h2>
+    {% csrf_token %}
+    {{ form.as_p }} 
+    <!-- <input class="form-control" placeholder="Username" id="id_username" maxlength="254" name="username" type="text" required autofocus=""/> 
+    <input class="form-control" placeholder="E-mail" id="id_email" maxlength="254" name="email" type="text" required/>
+    <input class="form-control" placeholder="Password" id="id_password" name="password" type="password" required/> 
+    <input class="form-control" placeholder="Password confirmation" id="id_password2" name="password2" type="password" required/>   -->
+    <button class="btn btn-lg btn-primary btn-block" type="submit" value="Submit">Register</button>  
+    </form>
 </div>
+
 {% endblock %}

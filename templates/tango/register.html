@@ -1,15 +1,18 @@
  {% extends 'base.html' %}  
+ {% load static %}
  {% block title %}Tango - Register{% endblock %}
  {% block body_block %}
+
+ <link rel="stylesheet" type="text/css" href="{% static 'signin.css' %}"> 
  <div> 
-	<h1>Register with Tango</h1>
+	<h2>Register with Tango</h2>
 
 	{% if registered %}
 	Tango says: <strong>thank you for registering!</strong>
 	<a href="/tango/">Return to the homepage.</a><br />
 	{% else %}
 	Tango says: <strong>register here!</strong><br /> 
-	<form id="user_form" method="post" action="/tango/register/" enctype="multipart/form-data">
+	<form  class="form-control" id="user_form" method="post" action="/tango/register/" enctype="multipart/form-data">
 		{% csrf_token %}
 
 		<!-- Display each form,The as_p method wraps each element in a paragraph
@@ -18,8 +21,10 @@
 		{{user_form.as_p}}
 		{{profile_form.as_p}}
 		<!-- Provide a button to click to submit the form. -->
-		<input type="submit" name="submit" value ="Register" /> 
+		<!-- <input type="submit" name="submit" value ="Register" />  -->
+		<button class="btn btn-lg btn-primary btn-block" type="submit" value="Submit">Register</button>
 	</form>
 	{% endif%}
 	</div> 
  {% endblock %}
+ 
