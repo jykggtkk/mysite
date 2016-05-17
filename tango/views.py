@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Category,Page
 from .form import CategoryForm,PageForm,UserForm,UserProfileForm
 from datetime import datetime 
+from tango.bing_search import run_query 
 # Create your views here.
 @login_required
 def index(request): 
@@ -243,3 +244,17 @@ def user_logout(request):
 
     #Take the user back to the homepage.
     return HttpResponseRedirect('/tango/login')
+
+@login_required
+def search(request):
+    result_list=[]
+
+    if request.method =='POST':
+        query= request.POST['query'].strip()
+
+        if query:
+            #Run our Bing function to get the results list!
+            result_list = run_query(query)
+
+    return render(request,'tango/search.html',{'result_list':result_list})
+
