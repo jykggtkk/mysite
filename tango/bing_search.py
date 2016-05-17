@@ -1,6 +1,12 @@
+# -*- coding: UTF-8 -*-
 import  json
 import urllib,urllib2 
 import key 
+import sys 
+
+#在检索汉字时 如不修改脚本的默认编码格式会导致转码错误
+reload(sys)
+sys.setdefaultencoding('utf-8')
 #Add your BING_API_KEY
 BING_API_KEY =  key.BING_API_KEY
 
