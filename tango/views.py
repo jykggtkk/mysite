@@ -1,4 +1,5 @@
-from django.shortcuts import render
+#coding=utf-8
+from django.shortcuts import render,redirect
 from django.http import HttpResponse,HttpResponseRedirect
 from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.decorators import login_required
@@ -14,8 +15,8 @@ def index(request):
     page_list=Page.objects.order_by('-views')[:5]
     context_dict={'categories':category_list,'pages':page_list}
 
-    print   category_list 
-    print   page_list 
+    #print   category_list 
+    #print   page_list 
 
     #Get the number of visits to the site. 
     visits= request.session.get('visits')
@@ -71,7 +72,7 @@ def category(request,category_name_slug):
 
         #Retrieve all of the associated pages.
         #Note that filter returns >=1 model instance.
-        pages=Page.objects.filter(category=category) 
+        pages=Page.objects.filter(category=category).order_by('-views')
         #Adds our results list to the template context under name pages .
         context_dict['pages']=pages
         #We also add the category object from  the databse to the context dictionary.
@@ -142,7 +143,7 @@ def add_page(request, category_name_slug):
 def register(request):
     
     if request.session.test_cookie_worked():
-        print ">>> TEST COOKIE WORKED!"
+        #print ">>> TEST COOKIE WORKED!"
         request.session.delete_test_cookie()
     #Aboolean value for telling the template whether the registration was successful.
     #Set to False initially.Code changes value to True when retgistration succeeds.
@@ -203,7 +204,7 @@ def user_login(request):
         #Use Django's machinery to attempt to see if the username/password
         #combination is valid - a User object is returned if it is.
         user = authenticate(username=username, password=password)
-        print user
+        #print user
         #If we have a User object,the details are correct.
         #If None,no user
         #with matching credentials was found.
@@ -257,4 +258,26 @@ def search(request):
             result_list = run_query(query)
 
     return render(request,'tango/search.html',{'result_list':result_list})
+
+
+@login_required 
+def track_url(request):
+    page_id=None 
+    url='/tango'
+
+    if request.method=='GET': 
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            #之前不能成功是因为 objects写成了object
+            try:
+                page=Page.objects.get(id=page_id)
+                print page
+                page.views=page.views+1
+                page.save()
+                url=page.url
+            except: 
+                pass
+             
+    return redirect(url)
+
 
