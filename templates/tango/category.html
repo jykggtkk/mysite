@@ -39,7 +39,7 @@
 <div class="hero-unit">
 	<div class="cantainer-fluid">
 		<p>Search for a page.</p>
-		<form class="span8 form-search" id="search_form" method="post" action="/tango/category/{{ category_name_slug }}/">
+		<form class="span8 form-search" id="search_form" method="post" action="/tango/category/{{ category.slug }}/">
 			{%csrf_token %}
 			<input type="text" class="input-long search-query" name="query" value="{{ category_name }}" id="query" />
 			<button type="submit" class="btn btn-success" name="submit" value="Search">Search</button>
